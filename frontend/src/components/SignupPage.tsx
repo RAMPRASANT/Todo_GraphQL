@@ -1,8 +1,16 @@
-import React, { useState } from 'react';
+import React, { type FormEvent, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 
+type UserCredProps = {
+    email: string;
+    password: string;
+}
+
 const SignupPage = () => {
-    const [userCred, setUserCred] = useState({})
+    const [userCred, setUserCred] = useState<UserCredProps>({
+        email: '',
+        password: ''
+    })
     const navigate = useNavigate();
 
     const handleSignIn = () => {
@@ -20,7 +28,7 @@ const SignupPage = () => {
         })
     };
 
-    const handleChange = (e, id) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>, id: string) => {
         setUserCred({ ...userCred, [id]: e.target.value })
     }
 

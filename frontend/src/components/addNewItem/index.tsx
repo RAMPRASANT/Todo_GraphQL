@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { type FC, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { Modal } from 'react-bootstrap';
 import { Form } from 'react-bootstrap';
@@ -9,12 +9,36 @@ import mutation from '../mutations/addTask';
 import query from '../query/getTasks';
 import './addNewItem.css';
 
-const AddNewItem = (props) => {
-    const [formData, setFormData] = useState({});
+type AddNewItemProps = {
+    show: boolean;
+    onSubmit: () => void;
+    onHide: () => void;
+};
+
+type FormDataProps = {
+    time: string;
+    heading: string;
+    content: string;
+    type: string;
+}
+
+const AddNewItem: FC<AddNewItemProps> = (props) => {
+    const [formData, setFormData] = useState<FormDataProps>({
+        time: '',
+        heading: '',
+        content: '',
+        type: '',
+    });
     const [showError, setShowError] = useState(false);
 
     // onchange handler of all the dropdown fields and it creats an todolist object
-    const handleChange = (e, key) => {
+    const handleChange = (e: React.FormEvent<HTMLSelectElement>, key: string) => {
+        e.preventDefault();
+        let obj = { ...formData, [key]: (e.target as HTMLInputElement).value };
+        setFormData(obj)
+    };
+
+    const handleChangeFormControlEle = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
         e.preventDefault();
         let obj = { ...formData, [key]: e.target.value };
         setFormData(obj)
@@ -31,7 +55,7 @@ const AddNewItem = (props) => {
     })
 
     //onsubmit handler and it trigger the callback function
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (Object.keys(formData).length === 4) {
             props.onSubmit()
@@ -76,11 +100,11 @@ const AddNewItem = (props) => {
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>Heading</Form.Label>
-                        <Form.Control data-testid='headingField' type="text" placeholder="Enter the task heading" onChange={(e) => handleChange(e, 'heading')} />
+                        <Form.Control data-testid='headingField' type="text" placeholder="Enter the task heading" onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeFormControlEle(e, 'heading')} />
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>Content</Form.Label>
-                        <Form.Control data-testid='contentField' as="textarea" rows={5} label="Enter the task content" onChange={(e) => handleChange(e, 'content')} />
+                        <Form.Control data-testid='contentField' as="textarea" rows={5} placeholder="Enter the task content" onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeFormControlEle(e, 'content')} />
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <CommonDropdown

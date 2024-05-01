@@ -1,9 +1,21 @@
-import React from "react";
+import React, { type FC } from "react";
 import Form from 'react-bootstrap/Form';
 
 // common component for all the dropdowns.
 // based on the props it can handle all the data rendering and events of dropdown fields
-const CommonDropdown = (props) => {
+
+type CommonDropdownProps = {
+    label: string;
+    options: string[];
+    options_config: {
+        firstOption: string
+    },
+    events: {
+        handleChange: (e: React.ChangeEvent<HTMLSelectElement>, label: string) => void;
+    },
+    hint: string
+}
+const CommonDropdown: FC<CommonDropdownProps> = (props) => {
     const { label, options, options_config, events, hint } = props;
     const defaultOption = options_config?.firstOption || '';
     return (
@@ -12,7 +24,7 @@ const CommonDropdown = (props) => {
             <Form.Select
                 aria-label="Default select"
                 data-testid={`${label}Field`}
-                onChange={(e) => events.handleChange(e, label)}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => events.handleChange(e, label)}
             >
                 <option>{defaultOption}</option>
                 {options && options.map((item, i) =>
